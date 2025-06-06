@@ -80,8 +80,8 @@ eval [] = do
       if v == 0 && b
         then pure ()
         else pushR v
-    RR int -> modP (`rotateR` fromIntegral int)
-    RL int -> modP (`rotateL` fromIntegral int)
+    RRI int -> modP (`rotateR` fromIntegral int)
+    RLI int -> modP (`rotateL` fromIntegral int)
     _ -> do
       v1 <- popP
       pIsEmpty <- nullP

@@ -1,0 +1,44 @@
+; Stack layout (top to bottom)
+; |    v       |   3
+; |    h       |   2
+; |    tend    |   1
+; |    t       |   0
+; Initializing stack
+    START
+    FS          ; velocity (v)
+    FS
+    ADDI 19332  ; height (h)
+    FS
+    ADDI 60     ; tend
+    FS          ; time (t)
+
+    BRA 3       ; Jump to subroutine
+    HALT
+
+; Fall subroutine
+    BRA 17
+
+; Initialize loop
+    SWAPBR
+    FR
+    NEG
+    TR
+
+; Loop condition
+    BGTZ 11
+
+    ADDI 1
+
+    TS
+    TS         ; now is h
+    ADDI 5
+    TS         ; now top is v
+    ADDI 10
+    FS         ; now top is h
+    SUB
+    FS
+    FS         ; back to initial
+
+    BNE -11
+
+    BRA -17

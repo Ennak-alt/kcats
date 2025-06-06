@@ -10,26 +10,28 @@ data INST
   | SUB
   | SWAP
   | XOR
-  | XORI Int64
-  | RL Int64
-  | RR Int64
-  | EXCHB Int64
   | EXCH
-  | EXCHI Int64
   | TS
   | FS
   | TR
   | FR
+  | SWAPBR
+  | HALT
+  | START
+  | EXCHI Int64
+  | XORI Int64
+  | RLI Int64
+  | RRI Int64
   | BRA Int64
   | RBRA Int64
   | BGTZ Int64
   | BLEZ Int64
   | BEQ Int64
   | BNE Int64
-  | IF Int64
-  | SWAPBR
-  | HALT
-  | START
+  | BGTZI Int64 Int64 Int64
+  | BLEZI Int64 Int64 Int64
+  | BEQI Int64 Int64 Int64
+  | BNEI Int64 Int64 Int64
   deriving (Show, Eq)
 
 revInst :: INST -> INST
@@ -37,8 +39,8 @@ revInst inst = case inst of
   ADDI int -> ADDI (-int)
   ADD -> SUB
   SUB -> ADD
-  RL int -> RR int
-  RR int -> RL int
+  RLI int -> RRI int
+  RRI int -> RLI int
   TS -> FS
   FS -> TS
   TR -> FR
@@ -91,53 +93,6 @@ revFallProg = [
     -- START,
     SUB,
     -- START,
-    FS,
-    FS,         -- back to initial
-
-    BNE (-11),
-
-    BRA (-17)
-  ]
-
-fallProg = [
--- Stack layout (top to bottom)
--- |    v       |   3
--- |    h       |   2
--- |    tend    |   1
--- |    t       |   0
--- Initializing stack
-    START,
-    FS,         -- velocity (v)
-    FS,
-    ADDI 19332,  -- height (h)
-    FS,
-    ADDI 60,     -- tend
-    FS,         -- time (t)
-
-    BRA 3,      -- Jump to subroutine
-    HALT,
-
--- Fall subroutine
-    BRA 17,
-
--- Initialize loop
-    SWAPBR,     -- br <=> stack[0]                          -- (which is 0)
-    FR,
-    NEG,
-    TR,
-
--- Loop condition
-    BGTZ 11,
-
-    ADDI 1,
-
-    TS,
-    TS,         -- now is h
-    ADDI 5,
-    TS,         -- now top is v
-    ADDI 10,
-    FS,         -- now top is h
-    SUB,
     FS,
     FS,         -- back to initial
 
