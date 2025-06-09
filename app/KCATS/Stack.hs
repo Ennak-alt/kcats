@@ -1,3 +1,4 @@
+{-# LANGUAGE InstanceSigs #-}
 module KCATS.Stack where
 
 import Data.List
@@ -5,20 +6,24 @@ import Data.List
 class Stack c where
   empty :: c a
   push :: a -> c a -> c a
-  pop :: c a -> (a, c a)
+  pop :: c a -> Maybe (a, c a)
   swapI 0 s = s
-  swapI :: Int -> c a -> c a
-  swap :: c a -> c a
+  swapI :: Num a => Int -> c a -> c a
+  swap :: Num a => c a -> c a
   swap = swapI 1
-  modifyTop :: (a -> a) -> c a -> c a
+  modifyTop :: Num a => (a -> a) -> c a -> c a
   null :: c a -> Bool
 
 instance Stack [] where
   empty = []
   push x s = x : s
-  pop (x : xs) = (x, xs)
+  pop :: [a] -> Maybe (a, [a])
+  pop [] = Nothing
+  pop (x : xs) = Just (x, xs)
   swapI 0 s = s
+  swapI i [] = [0]
   swapI i s = let (x : xs, y : ys) = Data.List.splitAt i s in y : xs Data.List.++ x : ys
+  modifyTop f [] = [f 0]
   modifyTop f (x : xs) = f x : xs
   null = Data.List.null
 

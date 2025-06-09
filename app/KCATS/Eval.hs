@@ -36,89 +36,86 @@ eval [] = do
       negBr
       flipDir
     FR -> do
-      b <- nullR
-      if b
-        then pushP 0
-        else do
-          v <- popR
-          pushP v
+      v <- popR
+      pushP v
     FS -> do
-      b <- nullS
-      if b
-        then pushP 0
-        else do
-          v <- popS
-          pushP v
-    _ | pIsEmpty -> pure ()
+      v <- popS
+      pushP v
     EXCHI int -> do
       v <- popP
       memV <- exchMem (fromIntegral int) v
       Data.Foldable.for_ memV pushP
     ADDI int -> modP (+ int)
     SWAPBR -> do
-      b <- nullR
-      v <- if b then pure 0 else popR
+      v <- popR
       v' <- swapBr (fromIntegral v)
       pushR (fromIntegral v')
     XORI int -> modP (xor int)
     NEG -> modP negate
-    BGTZ int -> do
-      v <- peekP
+    BEZ mi int -> do
+      v <-  case mi of 
+              Just i -> peekPI (fromIntegral i) 
+              Nothing -> peekP
+      when (v == 0) $ add2Br (fromIntegral int)
+    BNZ mi int -> do
+      v <-  case mi of 
+              Just i -> peekPI (fromIntegral i) 
+              Nothing -> peekP
+      when (v /= 0) $ add2Br (fromIntegral int)
+    BGTZ mi int -> do
+      v <-  case mi of 
+              Just i -> peekPI (fromIntegral i) 
+              Nothing -> peekP
       when (v > 0) $ add2Br (fromIntegral int)
-    BLEZ int -> do
+    BLTZ mi int -> do
       v <- peekP
-      when (v <= 0) $ add2Br (fromIntegral int)
+      when (v < 0) $ add2Br (fromIntegral int)
     TS -> do
       v <- popP
-      b <- nullS
-      if v == 0 && b
-        then pure ()
-        else pushS v
+      pushS v
     TR -> do
       v <- popP
-      b <- nullR
-      if v == 0 && b
-        then pure ()
-        else pushR v
+      pushR v
     RRI int -> modP (`rotateR` fromIntegral int)
     RLI int -> modP (`rotateL` fromIntegral int)
-    _ -> do
+    SWAP -> do
       v1 <- popP
-      pIsEmpty <- nullP
-      if pIsEmpty
-        then pushP v1
-        else case inst of
-          SWAP -> do
-            v1 <- popP
-            b <- nullP
-            if b
-              then pushP v1
-              else do
-                v2 <- popP
-                pushP v1
-                pushP v2
-          ADD -> do
-            v2 <- peekP
-            pushP (v1 + v2)
-          SUB -> do
-            v2 <- peekP
-            pushP (v1 - v2)
-          XOR -> do
-            v2 <- peekP
-            pushP (xor v1 v2)
-          EXCH -> do
-            v2 <- peekP
-            memV <- exchMem (fromIntegral v1) v2
-            pushP v1
-            Data.Foldable.for_ memV pushP
-          BNE int -> do
-            v2 <- peekP
-            pushP v1
-            when (v1 /= v2) $ add2Br (fromIntegral int)
-          BEQ int -> do
-            v2 <- peekP
-            pushP v1
-            when (v1 == v2) $ add2Br (fromIntegral int)
+      v2 <- popP
+      pushP v1
+      pushP v2
+    ADD -> do
+      v1 <- popP
+      v2 <- peekP
+      pushP (v1 + v2)
+    SUB -> do
+      v1 <- popP
+      v2 <- peekP
+      pushP (v1 - v2)
+    XOR -> do
+      v1 <- popP
+      v2 <- peekP
+      pushP (xor v1 v2)
+    EXCH -> do
+      v1 <- popP
+      v2 <- peekP
+      memV <- exchMem (fromIntegral v2) v1
+      Data.Foldable.for_ memV pushP
+    BNE mi1 mi2 int -> do
+      v1 <- case mi1 of 
+              Just i  -> peekPI (fromIntegral i)
+              Nothing -> peekPI 0
+      v2 <- case mi2 of 
+              Just i  -> peekPI (fromIntegral i)
+              Nothing -> peekPI 1
+      when (v1 /= v2) $ add2Br (fromIntegral int)
+    BEQ mi1 mi2 int -> do
+      v1 <- case mi1 of 
+              Just i  -> peekPI (fromIntegral i)
+              Nothing -> peekPI 0
+      v2 <- case mi2 of 
+              Just i  -> peekPI (fromIntegral i)
+              Nothing -> peekPI 1
+      when (v1 == v2) $ add2Br (fromIntegral int)
   case inst of
     HALT -> pure ()
     _ -> eval []

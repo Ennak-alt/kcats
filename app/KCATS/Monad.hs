@@ -10,8 +10,6 @@ import qualified Data.Foldable
 import Data.Int (Int64)
 import Data.List
 import Data.Traversable (forM)
-import Data.Vector.Mutable
-import qualified Data.Vector.Primitive as Data
 import GHC.Base (ap)
 import GHC.Integer (xorInteger)
 import GHC.Num (integerXor)
@@ -50,38 +48,50 @@ instance Monad (EvalM c a) where
 getState :: EvalM c a (State c a)
 getState = EvalM $ \s -> (s, s)
 
-peekP :: EvalM [] a a
-peekP = EvalM $ \s -> (s, head $ primDataStack s)
+peekP :: Num a => EvalM [] a a
+peekP = EvalM $ \s -> 
+  case primDataStack s !? 0 of 
+    Just e -> (s, e)
+    Nothing -> (s, 0)
 
-modP :: Stack c => (a -> a) -> EvalM c a ()
+peekPI :: Num a => Int -> EvalM [] a a 
+peekPI i = EvalM $ \s -> 
+  case primDataStack s !? i of 
+    Just e -> (s, e)
+    Nothing -> (s, 0)
+
+modP :: (Stack c, Num a) => (a -> a) -> EvalM c a ()
 modP f = EvalM $ \s -> (s { primDataStack = modifyTop f $ primDataStack s }, ())
 
-pushP :: Stack c => a -> EvalM c a ()
-pushP i = EvalM $ \s ->
-  (s { primDataStack = push i $ primDataStack s }, ())
+pushP :: (Stack c, Num a, Eq a) => a -> EvalM c a ()
+pushP i = EvalM $ \s -> do
+  if i == 0 && KCATS.Stack.null (primDataStack s) then (s, ()) else (s { primDataStack = push i $ primDataStack s }, ())
 
-pushS :: Stack c => a -> EvalM c a ()
+pushS :: (Stack c, Num a, Eq a) => a -> EvalM c a ()
 pushS i = EvalM $ \s ->
-  (s { secDataStack = push i $ secDataStack s }, ())
+  if i == 0 && KCATS.Stack.null (secDataStack s) then (s, ()) else (s { secDataStack = push i $ secDataStack s }, ())
 
-pushR :: Stack c => a -> EvalM c a ()
+pushR :: (Stack c, Num a, Eq a) => a -> EvalM c a ()
 pushR i = EvalM $ \s ->
-  (s { retStack = push i $ retStack s}, ())
+  if i == 0 && KCATS.Stack.null (retStack s) then (s, ()) else (s { retStack = push i $ retStack s}, ())
 
-popP :: EvalM [] a a
+popP :: Num a => EvalM [] a a
 popP = EvalM $ \s ->
-  let (d, npds) = pop $ primDataStack s
-   in (s { primDataStack = npds }, d)
+  case pop $ primDataStack s of 
+    Just (d, npds) -> (s { primDataStack = npds }, d)
+    Nothing -> (s, 0)
 
-popS :: EvalM [] a a
+popS :: Num a => EvalM [] a a
 popS = EvalM $ \s ->
-  let (d, nsds) = pop $ secDataStack s
-   in (s { secDataStack = nsds}, d)
+  case pop $ secDataStack s of
+    Just (d, nsds) -> (s { secDataStack = nsds}, d)
+    Nothing -> (s, 0)
 
-popR :: EvalM [] a a
+popR :: Num a => EvalM [] a a
 popR = EvalM $ \s ->
-  let (d, nrs) = pop $ retStack s
-   in (s {retStack = nrs}, d)
+  case pop $ retStack s of 
+    Just (d, nrs) -> (s {retStack = nrs}, d)
+    Nothing -> (s, 0)
 
 nullS :: EvalM [] a Bool
 nullS = EvalM $ \s -> (s, KCATS.Stack.null $ secDataStack s)

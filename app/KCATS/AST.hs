@@ -24,14 +24,12 @@ data INST
   | RRI Int64
   | BRA Int64
   | RBRA Int64
-  | BGTZ Int64
-  | BLEZ Int64
-  | BEQ Int64
-  | BNE Int64
-  | BGTZI Int64 Int64 Int64
-  | BLEZI Int64 Int64 Int64
-  | BEQI Int64 Int64 Int64
-  | BNEI Int64 Int64 Int64
+  | BNZ  (Maybe Int64) Int64
+  | BEZ  (Maybe Int64) Int64
+  | BGTZ (Maybe Int64) Int64
+  | BLTZ (Maybe Int64) Int64
+  | BEQ (Maybe Int64) (Maybe Int64) Int64
+  | BNE (Maybe Int64) (Maybe Int64) Int64
   deriving (Show, Eq)
 
 revInst :: INST -> INST
@@ -78,7 +76,7 @@ revFallProg = [
     TR,
 
 -- Loop condition
-    BGTZ 11,
+    BGTZ Nothing 11,
     -- START,
 
     ADDI 1,
@@ -96,7 +94,7 @@ revFallProg = [
     FS,
     FS,         -- back to initial
 
-    BNE (-11),
+    BNE Nothing Nothing (-11),
 
     BRA (-17)
   ]
