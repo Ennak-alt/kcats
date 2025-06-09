@@ -20,9 +20,11 @@ instance Stack [] where
   pop :: [a] -> Maybe (a, [a])
   pop [] = Nothing
   pop (x : xs) = Just (x, xs)
+  swapI :: Num a => Int -> [a] -> [a]
   swapI 0 s = s
   swapI i [] = [0]
-  swapI i s = let (x : xs, y : ys) = Data.List.splitAt i s in y : xs Data.List.++ x : ys
+  swapI i s@(x:xs) | i < length s = let (x : xs, y : ys) =  Data.List.splitAt i s in y : xs Data.List.++ x : ys
+                   | otherwise = 0 : xs Data.List.++ (take (i - length s) $ repeat 0) Data.List.++ [x]
   modifyTop f [] = [f 0]
   modifyTop f (x : xs) = f x : xs
   null = Data.List.null

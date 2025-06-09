@@ -60,6 +60,9 @@ peekPI i = EvalM $ \s ->
     Just e -> (s, e)
     Nothing -> (s, 0)
 
+swapP :: Num a => Int -> EvalM [] a () 
+swapP i = EvalM $ \s -> (s {primDataStack = swapI i $ primDataStack s}, ())
+
 modP :: (Stack c, Num a) => (a -> a) -> EvalM c a ()
 modP f = EvalM $ \s -> (s { primDataStack = modifyTop f $ primDataStack s }, ())
 

@@ -1,0 +1,118 @@
+    START ; Load the text
+    ADDI 7
+    EXCHI 0
+    ADDI 7
+    EXCHI 1
+    ADDI 7
+    EXCHI 2
+    ADDI 3
+    EXCHI 3
+    ADDI 3
+    EXCHI 4
+    ADDI 5
+    EXCHI 5
+    ADDI 5
+    EXCHI 6
+    ADDI 5
+    EXCHI 7
+    ADDI 5
+    EXCHI 8
+    ADDI 51     ; j+1
+    FS
+    FS
+    ADDI 50     ; j
+    FS
+    EXCH        ; code[j]
+    FS          ; i
+    FS          ; text[i]  
+    EXCH        ; load text[i]
+    BGTZ $1 53  ; i > 0 ; Loop
+    TS 
+    TS 
+    EXCH        ; load code[j]
+    TS 
+    TS
+    EXCH        ; load code[j+1]
+    FS          ; RESET STACK
+    FS 
+    FS          
+    FS        
+    SWAP 
+    TS
+    SWAP
+    FS 
+    SWAP
+    BNZ $4 17   ; Inner loop
+    TS          ; text[i] -> S
+    TS          ; i -> S
+    TS          ; code[j] -> S
+    TS          ; j -> S
+    ADDI 1      ; code[j+1] += 1
+    FS          ; j <- S 
+    FS          ; code[j] <- S 
+    FS          ; i <- S
+    ADDI 1      ; i += 1
+    FS          ; S <- text[i]
+    EXCH        ; load text[i]
+    SWAP        ; i <=> text[i]
+    TS          ; i -> S
+    SUB         ; text[i] -= code[j]
+    FS          ; i <- S
+    SWAP        ; text[i] <=> i  
+    BEZ -17     ; text[i] == 0
+    SWAP        ; Revert the text[i] -= code[j] change        
+    TS 
+    ADD 
+    FS 
+    SWAP
+    TS 
+    TS
+    EXCH
+    TS
+    ADDI 2      ; j += 2
+    TS  
+    EXCH   
+    TS    
+    ADDI 2      ; j+1 += 2
+    FS 
+    FS
+    FS
+    FS 
+    FS
+    BNZ -53
+    
+    BNZ $2 22
+    TS          ; text[i] -> S
+    TR          ; i -> R 
+    EXCH
+    TS          ; code [j] -> S
+    ADDI -2     ; j -= 2
+    FS          ; code[j] <- S
+    EXCH        ; load code[j]
+    TS          ; code[j] -> S
+    TS          ; j -> S
+    TS          ; code[j+1] -> S
+    ADDI -2     ; j+1 -= 2
+    FS          ; code[j+1] <- S
+    EXCH        ; load code[j+1]
+    FR          ; i <- R
+    SUB         ; i -= code[j+1]
+    TR          ; i -> R
+    EXCH        ; store code[j+1]
+    FS 
+    FS 
+    FR 
+    FS
+    BNZ $1 -22
+
+    TS 
+    TS 
+    EXCH 
+    TS 
+    ADDI -50
+    TS 
+    TS 
+    ADDI -51
+    TS
+
+    HALT

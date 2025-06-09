@@ -1,0 +1,33 @@
+; if i == 0 then 
+;   if j == 0 then result = 2 
+;   else result = 1
+; else result = 0
+; Stack layout (bottom to top)
+; |    j       |   2
+; |    i       |   1
+; |    result  |   0
+; In this version we expect the result to be 2, since i and j are 0
+    START
+    FS 
+    ADDI 0  ; set j = 0
+    FS 
+    ADDI 0  ; set i = 0
+    FS
+
+    BEZ $1 2
+
+    BRA 8   
+    BRA -2
+
+    ADDI 1
+
+    BEZ $2 2
+
+    BRA 3
+    BRA -2
+
+    ADDI 1
+
+    BEZ $0 -3 
+    BEZ $0 -8
+    HALT

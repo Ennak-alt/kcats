@@ -45,6 +45,8 @@ eval [] = do
       v <- popP
       memV <- exchMem (fromIntegral int) v
       Data.Foldable.for_ memV pushP
+    SWAPI int -> do
+      swapP (fromIntegral int)
     ADDI int -> modP (+ int)
     SWAPBR -> do
       v <- popR

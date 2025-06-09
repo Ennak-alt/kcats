@@ -1,12 +1,10 @@
-; Stack layout (top to bottom)
+; Stack layout (bottom to top)
 ; |    v       |   3
 ; |    h       |   2
 ; |    tend    |   1
 ; |    t       |   0
 ; Initializing stack
     START
-    FS          ; velocity (v)
-    FS
     ADDI 19332  ; height (h)
     FS
     ADDI 60     ; tend

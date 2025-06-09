@@ -18,6 +18,7 @@ data INST
   | SWAPBR
   | HALT
   | START
+  | SWAPI Int64
   | EXCHI Int64
   | XORI Int64
   | RLI Int64

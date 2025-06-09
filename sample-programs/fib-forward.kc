@@ -1,0 +1,41 @@
+; Stack layout (bottom to top)
+; |    n        |   2
+; |    x2       |   1
+; |    x1       |   0
+; Initializing stack
+    START
+    ADDI 13     ; n
+
+    BRA 3       ; Jump to subroutine
+    HALT
+
+; Fall subroutine
+    BRA 19
+
+; Initialize loop
+    SWAPBR
+    FR
+    NEG
+    TR
+
+    ADDI -2     
+
+    FS 
+    ADDI 1      ; x2
+    FS          
+    ADDI 1      ; x1
+
+; Loop condition
+    BNE 8
+
+    TS 
+    TS 
+    ADDI -1     ; n -= 1
+    FS 
+    FS 
+    ADD         ; x1 += x2
+    SWAP        ; x1 <=> x2
+
+    BNZ $2 -8   ; n != 0
+
+    BRA -19
