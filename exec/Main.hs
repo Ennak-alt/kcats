@@ -62,12 +62,25 @@ main = do
         file:loads -> do 
             loadList <- case loads of 
                 "--mem":memoryloads -> pure $ memload memoryloads
-                _ -> pure []
+                [] -> pure []
+                s -> do 
+                    putStr "Arguments: "
+                    print s
+                    putStrLn "Are not valid, you must use --mem ..."
+                    error "Failed! Arguments wrong"
             fileContents <- readFile file
             case parseKCATS file fileContents of
                 Right r -> do 
                     case splitWhen (== START) r of 
                         [xs, ys] -> printMemory $ runEval $ eval (xs ++ START : loadList ++ ys)
-                        _ -> error "Missing or too many START labels"
+                        _ -> print "Error: Missing or too many START labels"
                 Left s -> error s
-        _ -> error "No file!"
+        _ -> do 
+            putStrLn "Usage:"
+            putStr   "\tRunning interpreter: "
+            putStrLn "\t<input_file> [--mem memindex memlist ...] "
+            putStrLn "\tExample: \t\t\"./kcats prog.kc --mem 0 1,2,3,4 100 5,6,7,8\""
+            putStrLn ""
+            putStr   "\tInversion on file: "
+            putStrLn "\t--inv <input_file> -o <output_file>"
+            putStrLn "\tExample: \t\t\"./kcats --inv encode.kc -o decode.kc\""

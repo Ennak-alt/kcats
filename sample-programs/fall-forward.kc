@@ -3,14 +3,26 @@
 ; |    h       |   2
 ; |    tend    |   1
 ; |    t       |   0
+    START   
 ; Initializing stack
-    START
-    ADDI 19332  ; height (h)
-    FS
-    ADDI 60     ; tend
-    FS          ; time (t)
+    EXCHI 3     ; velocity (v) 
+    FS           
+    EXCHI 2     ; height (h) 
+    FS          
+    EXCHI 1     ; tend
+    FS         
+    EXCHI 0     ; time (t)
 
-    BRA 3       ; Jump to subroutine
+    BRA 10       ; Jump to subroutine
+
+    EXCHI 0     ; time (t) 
+    TS          
+    EXCHI 1     ; tend
+    TS         
+    EXCHI 2     ; height (h)
+    TS
+    EXCHI 3     ; velocity (v) 
+
     HALT
 
 ; Fall subroutine
