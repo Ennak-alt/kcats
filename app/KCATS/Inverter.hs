@@ -22,6 +22,7 @@ invertInst inst = case inst of
   BRA i -> BRA (-i)
   HALT -> START
   START -> HALT
-  inst -> inst
+  _ -> inst
 
+invertInsts :: [INST] -> [INST]
 invertInsts = map invertInst . reverse

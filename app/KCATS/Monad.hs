@@ -2,18 +2,9 @@
 {-# LANGUAGE TupleSections #-}
 
 module KCATS.Monad where
-
-import Control.Monad (liftM, unless, when)
-import Control.Monad.IO.Class (MonadIO (liftIO))
-import Data.Bits
-import qualified Data.Foldable
+import Control.Monad
 import Data.Int (Int64)
 import Data.List
-import Data.Traversable (forM)
-import GHC.Base (ap)
-import GHC.Integer (xorInteger)
-import GHC.Num (integerXor)
-
 import KCATS.AST
 import KCATS.Stack
 
@@ -108,12 +99,12 @@ nullP = EvalM $ \s -> (s, KCATS.Stack.null $ primDataStack s)
 exchMem :: (Stack c, Eq b, Num b) => Int64 -> b -> EvalM c b (Maybe b)
 exchMem i v = EvalM $ \s ->
   case lookup i $ staticMemory s of
-    Just elem ->
+    Just e ->
       if v == 0
         then
-          (s {staticMemory = Data.List.filter ((/= i) . fst) $ staticMemory s}, Just elem)
+          (s {staticMemory = Data.List.filter ((/= i) . fst) $ staticMemory s}, Just e)
         else
-          (s {staticMemory = Data.List.map (\(key, y) -> if key == i then (key, v) else (key, y)) $ staticMemory s}, Just elem)
+          (s {staticMemory = Data.List.map (\(key, y) -> if key == i then (key, v) else (key, y)) $ staticMemory s}, Just e)
     Nothing -> if v == 0 then (s, Just 0) else (s { staticMemory = (i, v) : staticMemory s}, Just 0)
 
 flipDir :: Stack c => EvalM c a ()
@@ -128,9 +119,11 @@ negBr = EvalM $ \s -> (s {br = - (br s)}, ())
 swapBr :: Stack c => Integer -> EvalM c a Integer
 swapBr i = EvalM $ \s -> (s {br = i}, br s)
 
+initialize :: Stack c => [INST] -> EvalM c a ()
 initialize insts =
-  let Just start = elemIndex START insts in
-  EvalM $ \s -> (s {instructions = insts, pc = fromIntegral start}, ())
+  case elemIndex START insts of 
+    Just start -> EvalM $ \s -> (s {instructions = insts, pc = fromIntegral start}, ())
+    Nothing -> error "Need a START label"
 
 fetchInst :: EvalM [] a INST
 fetchInst = EvalM $ \s ->
@@ -141,6 +134,6 @@ fetchInst = EvalM $ \s ->
   in if pc' >= -1 && pc' <= fromIntegral (Data.List.length insts') then
       let newPC = if br' /= 0 then pc' + br' * dir' else pc' + dir' in
         case Data.List.splitAt (fromInteger newPC) insts' of
-          (xs, y:ys) -> (s {pc = newPC}, if dir' == 1 then y else revInst y)
-          (xs, []) -> (s {pc = newPC}, HALT)
+          (_xs, y:_ys) -> (s {pc = newPC}, if dir' == 1 then y else revInst y)
+          (_xs, []) -> (s {pc = newPC}, HALT)
      else error (show pc')

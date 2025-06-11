@@ -48,14 +48,17 @@ revInst inst = case inst of
   START -> HALT
   _ -> inst
 
+showBranch2 :: (Show a1, Show a2) => [Char] -> Maybe a2 -> a1 -> [Char]
 showBranch2 str Nothing i = str ++ " " ++ show i
 showBranch2 str (Just i1) i = str ++ " $" ++ show i1 ++ " " ++ show i
 
-showBranch3 str Nothing mi i = str ++ " " ++ show i
+showBranch3 :: (Show a1, Show a2, Show a3) => [Char] -> Maybe a2 -> Maybe a3 -> a1 -> [Char]
+showBranch3 str Nothing _mi i = str ++ " " ++ show i
 showBranch3 str (Just i1) Nothing i = str ++ " $" ++ show i1 ++ " " ++ show i
 showBranch3 str (Just i1) (Just i2) i = 
   str ++ " $" ++ show i1 ++ " $" ++ show i2 ++ " " ++ show i
 
+showINST :: INST -> [Char]
 showINST inst = case inst of 
   BNZ  mi i -> showBranch2 "BNZ" mi i
   BEZ  mi i -> showBranch2 "BEZ" mi i

@@ -1,25 +1,12 @@
 module KCATS.Parser where
 
 import KCATS.AST
-import Control.Monad (void)
-import Data.Char (isAlpha, isAlphaNum, isDigit)
-import Data.Void (Void)
+import Control.Monad
+import Data.Char
+import Data.Void
 import Text.Megaparsec
-  ( Parsec,
-    choice,
-    chunk,
-    eof,
-    errorBundlePretty,
-    many,
-    notFollowedBy,
-    parse,
-    satisfy,
-    some,
-    try, MonadParsec (takeWhile1P, takeWhileP)
-  )
-import Text.Megaparsec.Char (space, newline, hspace)
-import Data.Int (Int64)
-import Control.Applicative (Const(Const))
+import Text.Megaparsec.Char
+import Data.Int 
 
 type Parser = Parsec Void String
 

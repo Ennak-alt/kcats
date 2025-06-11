@@ -2,17 +2,10 @@
 
 module KCATS.Eval where
 
-import Control.Monad (liftM, unless, when)
-import Control.Monad.IO.Class (MonadIO (liftIO))
+import Control.Monad
 import Data.Bits
 import qualified Data.Foldable
-import Data.Int (Int64)
-import Data.List
-import Data.Traversable (forM)
-import GHC.Base (ap)
-import GHC.Integer (xorInteger)
-import GHC.Num (integerXor)
-
+import Data.Int 
 import KCATS.Monad
 import KCATS.AST
 import KCATS.Stack
@@ -25,7 +18,6 @@ runEval (EvalM m) =
 eval :: [INST] -> EvalM [] Int64 ()
 eval [] = do
   inst <- fetchInst
-  pIsEmpty <- nullP
   case inst of
     NOP -> pure ()
     START -> pure ()
@@ -71,7 +63,9 @@ eval [] = do
               Nothing -> peekP
       when (v > 0) $ add2Br (fromIntegral int)
     BLTZ mi int -> do
-      v <- peekP
+      v <-  case mi of 
+              Just i -> peekPI (fromIntegral i) 
+              Nothing -> peekP
       when (v < 0) $ add2Br (fromIntegral int)
     TS -> do
       v <- popP

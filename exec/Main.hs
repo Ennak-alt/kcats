@@ -12,14 +12,15 @@ import KCATS.Monad
 
 memload :: [String] -> [INST]
 memload [] = []
-memload (memi:memlist:rest) = 
-    (++ memload rest)
+memload (memi:memlist:xs) = 
+    (++ memload xs)
     $ foldr (\(i, v) l -> ADDI v : EXCHI i : l) []
     $ zip (iterate (+1) (read memi)) 
     $ map (read :: String -> Int64) 
     $ splitOn "," memlist 
 memload _ = error "Each memory load should be two arguments!"
 
+printMemory :: KCATS.Monad.State [] Int64 -> IO ()
 printMemory s = do 
     if null $ primDataStack s 
         then putStrLn "Primary data stack was empty" 
@@ -42,6 +43,7 @@ printMemory s = do
             putStr "State of static memory (index, value): "
             print $ sortOn fst $ staticMemory s
 
+instsToString :: [INST] -> String
 instsToString = foldl ((++) . (++ "\n")) "" . map showINST 
 
 main :: IO ()

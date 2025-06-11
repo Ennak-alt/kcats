@@ -55,18 +55,23 @@ common warnings
     ghc-options: -Wall
 
 library 
+    import:         warnings
     hs-source-dirs: app
     build-depends:
         base
       , megaparsec
       , QuickCheck
-      , vector
+      , List
+      , split
+
     exposed-modules:
         KCATS.AST 
         KCATS.Eval
         KCATS.Monad
         KCATS.Stack
         KCATS.Parser
+        KCATS.Inverter
+    default-language: Haskell2010
 
 
 executable kcats
@@ -84,14 +89,15 @@ executable kcats
 
     -- Other library packages from which modules are imported.
     build-depends:    
-        base ^>=4.17.2.1
+        base
       , megaparsec
       , QuickCheck
-      , vector
-
+      , List
+      , split
+      , kcats
 
     -- Directories containing source files.
-    hs-source-dirs:   app
+    hs-source-dirs:   exec
 
     -- Base language which the package is written in.
     default-language: Haskell2010

@@ -2,6 +2,7 @@
 ;   if j == 0 then result = 2 
 ;   else result = 1
 ; else result = 0
+;
 ; Stack layout (bottom to top)
 ; |    j       |   2
 ; |    i       |   1
