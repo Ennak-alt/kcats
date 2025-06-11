@@ -48,54 +48,19 @@ revInst inst = case inst of
   START -> HALT
   _ -> inst
 
-revFallProg = [
--- Stack layout (top to bottom)
--- |    v       |   3
--- |    h       |   2
--- |    tend    |   1
--- |    t       |   0
--- Initializing stack
-    START,
-    FS,         
-    ADDI 40,    -- velocity (v) 
-    FS,          -- height (h) 
-    FS,
-    ADDI 4,     -- tend
-    FS,         
-    ADDI 4,     -- time (t)
+showBranch2 str Nothing i = str ++ " " ++ show i
+showBranch2 str (Just i1) i = str ++ " $" ++ show i1 ++ " " ++ show i
 
-    RBRA 3,      -- Jump to subroutine
-    HALT,
+showBranch3 str Nothing mi i = str ++ " " ++ show i
+showBranch3 str (Just i1) Nothing i = str ++ " $" ++ show i1 ++ " " ++ show i
+showBranch3 str (Just i1) (Just i2) i = 
+  str ++ " $" ++ show i1 ++ " $" ++ show i2 ++ " " ++ show i
 
--- Fall subroutine
-    BRA 17,
-
--- Initialize loop
-    SWAPBR,     -- br <=> stack[0]                          -- (which is 0)
-    FR,
-    NEG,
-    TR,
-
--- Loop condition
-    BGTZ Nothing 11,
-    -- START,
-
-    ADDI 1,
-    -- START,
-
-    TS,
-    TS,         -- now is h
-    ADDI 5,
-    TS,         -- now top is v
-    ADDI 10,
-    FS,         -- now top is h
-    -- START,
-    SUB,
-    -- START,
-    FS,
-    FS,         -- back to initial
-
-    BNE Nothing Nothing (-11),
-
-    BRA (-17)
-  ]
+showINST inst = case inst of 
+  BNZ  mi i -> showBranch2 "BNZ" mi i
+  BEZ  mi i -> showBranch2 "BEZ" mi i
+  BGTZ mi i -> showBranch2 "BGTZ" mi i
+  BLTZ mi i -> showBranch2 "BLTZ" mi i
+  BEQ mi1 mi2 i -> showBranch3 "BEQ" mi1 mi2 i
+  BNE mi1 mi2 i -> showBranch3 "BNE" mi1 mi2 i
+  _ -> filter (\c -> c /= '(' && c /= ')') $ show inst

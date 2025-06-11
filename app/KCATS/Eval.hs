@@ -22,6 +22,7 @@ runEval (EvalM m) =
   (\(s, ()) -> s) $
     m (State [] empty empty empty [] (-1) 0 1)
 
+eval :: [INST] -> EvalM [] Int64 ()
 eval [] = do
   inst <- fetchInst
   pIsEmpty <- nullP
