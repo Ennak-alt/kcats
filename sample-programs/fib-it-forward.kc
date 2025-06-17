@@ -10,15 +10,13 @@
     HALT
 
 ; Fall subroutine
-    BRA 19
+    BRA 18
 
 ; Initialize loop
     SWAPBR
     FR
     NEG
     TR
-
-    ADDI -2     
 
     FS 
     ADDI 1      ; x2
@@ -38,4 +36,4 @@
 
     BNZ $2 -8   ; n != 0
 
-    BRA -19
+    BRA -18

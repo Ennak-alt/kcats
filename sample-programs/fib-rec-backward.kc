@@ -1,0 +1,50 @@
+; Stack layout (bottom to top)
+; |    n        |   2
+; |    x2       |   1
+; |    x1       |   0
+; Initializing stack
+    START
+    ADDI 610     ; x2
+    FS
+    ADDI 377    ; x1
+
+    RBRA 3       ; Jump to subroutine
+    HALT
+
+; fib subroutine
+    BRA 25
+
+; call comes here
+    SWAPBR
+    FR
+    NEG
+    TR
+
+; if 
+    BNZ $2 6    ; n = 0
+
+; then branch
+    ADDI 1      ; x1 += 1
+    SWAP 
+    ADDI 1      ; x2 += 1
+    SWAP
+    BRA 14
+
+; else branch
+    BRA -6
+    TS 
+    TS 
+    ADDI -1     ; n -= 1
+    FS 
+    FS
+    FS
+    TR          ; make top of return stack zero
+    BRA -18     ; recursive fib call
+    FR 
+    TS 
+    ADD         ; x1 += x2
+    SWAP
+
+; if assert condition
+    BEQ -14
+    BRA -25
