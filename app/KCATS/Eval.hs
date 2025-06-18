@@ -34,7 +34,7 @@ eval [] = do
     FS -> do
       v <- popS
       pushP v
-    EXCHI int -> do
+    EXCHA int -> do
       v <- popP
       memV <- exchMem (fromIntegral int) v
       Data.Foldable.for_ memV pushP
@@ -51,7 +51,7 @@ eval [] = do
       v <-  case mi of 
               Just i -> peekPI (fromIntegral i) 
               Nothing -> peekP
-      when (v == 0) $ add2Br (fromIntegral int)
+      when (v == 0) $ add2Br (fromIntegral int) 
     BNZ mi int -> do
       v <-  case mi of 
               Just i -> peekPI (fromIntegral i) 
@@ -88,6 +88,14 @@ eval [] = do
       v1 <- popP
       v2 <- peekP
       pushP (v1 - v2)
+    RL -> do
+      v1 <- popP
+      v2 <- peekP
+      pushP (v1 `rotateL` fromIntegral v2)
+    RR -> do
+      v1 <- popP
+      v2 <- peekP
+      pushP (v1 `rotateR` fromIntegral v2)
     XOR -> do
       v1 <- popP
       v2 <- peekP

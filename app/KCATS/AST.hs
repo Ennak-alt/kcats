@@ -5,9 +5,11 @@ import Data.Int (Int64)
 data INST
   = ADDI Int64
   | ADD
+  | SUB
   | NEG
   | NOP
-  | SUB
+  | RL 
+  | RR
   | SWAP
   | XOR
   | EXCH
@@ -19,7 +21,7 @@ data INST
   | HALT
   | START
   | SWAPI Int64
-  | EXCHI Int64
+  | EXCHA Int64
   | XORI Int64
   | RLI Int64
   | RRI Int64

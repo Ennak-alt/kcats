@@ -14,7 +14,7 @@ memload :: [String] -> [INST]
 memload [] = []
 memload (memi:memlist:xs) = 
     (++ memload xs)
-    $ foldr (\(i, v) l -> ADDI v : EXCHI i : l) []
+    $ foldr (\(i, v) l -> ADDI v : EXCHA i : l) []
     $ zip (iterate (+1) (read memi)) 
     $ map (read :: String -> Int64) 
     $ splitOn "," memlist 

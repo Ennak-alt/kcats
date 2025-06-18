@@ -1,2 +1,2 @@
 all:
-	cabal install --installdir=. --overwrite-policy=always 
+	cabal install --installdir=. --overwrite-policy=always

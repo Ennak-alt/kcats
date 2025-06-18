@@ -77,7 +77,7 @@ pInst =
     ((:) <$> branch2 "BNZ" BNZ) <*> pInst,
     ((:) <$> branch3 "BEQ" BEQ) <*> pInst,
     ((:) <$> branch3 "BNE" BNE) <*> pInst,
-    ((:) <$> p1arg "EXCHI" EXCHI) <*> pInst,
+    ((:) <$> p1arg "EXCHA" EXCHA) <*> pInst,
     ((:) <$> p1arg "SWAPI" SWAPI) <*> pInst,
 
     ((:) <$> p0arg "START" START) <*> pInst,

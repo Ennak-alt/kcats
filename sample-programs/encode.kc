@@ -1,7 +1,7 @@
 START
-EXCHI 0     ; load text[0]
+EXCHA 0     ; load text[0]
 BEZ 98
-EXCHI 0     ; store text[0] back
+EXCHA 0     ; store text[0] back
 ADDI 51     ; j+1
 FS
 FS
@@ -97,7 +97,7 @@ TS
 TS 
 ADDI -51
 TS
-EXCHI 50
+EXCHA 50
 BEZ -98
-EXCHI 50
+EXCHA 50
 HALT

@@ -8,7 +8,7 @@
     FS          ; x2
     FS          ; x1
 
-    BRA 3       ; Jump to subroutine
+    BRA 3       ; call subroutine
     HALT
 
 ; fib subroutine

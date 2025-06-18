@@ -8,7 +8,7 @@
     FS
     ADDI 377    ; x1
 
-    RBRA 3       ; Jump to subroutine
+    RBRA 3       ; call subroutine
     HALT
 
 ; fib subroutine
@@ -28,7 +28,7 @@
     SWAP 
     ADDI 1      ; x2 += 1
     SWAP
-    BRA 14
+    BRA 14      ; jump to assert
 
 ; else branch
     BRA -6

@@ -5,23 +5,23 @@
 ; |    t       |   0
     START   
 ; Initializing stack
-    EXCHI 3     ; velocity (v) 
+    EXCHA 3     ; velocity (v) 
     FS           
-    EXCHI 2     ; height (h) 
+    EXCHA 2     ; height (h) 
     FS          
-    EXCHI 1     ; tend
+    EXCHA 1     ; tend
     FS         
-    EXCHI 0     ; time (t)
+    EXCHA 0     ; time (t)
 
     BRA 10       ; Jump to subroutine
 
-    EXCHI 0     ; time (t) 
+    EXCHA 0     ; time (t) 
     TS          
-    EXCHI 1     ; tend
+    EXCHA 1     ; tend
     TS         
-    EXCHI 2     ; height (h)
+    EXCHA 2     ; height (h)
     TS
-    EXCHI 3     ; velocity (v) 
+    EXCHA 3     ; velocity (v) 
 
     HALT
 
